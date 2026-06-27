@@ -184,6 +184,9 @@ body {
 /* hide the thumbnail rail per request (keep markup but not show images) */
 #love-thumbs { display: none; }
 #love-main-image { transition: opacity 300ms ease, transform 300ms ease; }
+#love-image-loader { opacity: 0; pointer-events: none; transition: opacity 240ms ease; }
+#love-image-loader.show { opacity: 1; }
+.loader-ring { animation: spin 1s linear infinite; }
 
 .love-close-btn {
   width: 44px;
@@ -292,6 +295,7 @@ body {
 
 /* subtle breathing animation */
 @keyframes floaty { 0% { transform: translateY(0) } 50% { transform: translateY(-6px) } 100% { transform: translateY(0) } }
+@keyframes spin { to { transform: rotate(360deg); } }
 #gift-box { animation: floaty 3.4s ease-in-out infinite; }
 
 /* shake to attract attention before click */

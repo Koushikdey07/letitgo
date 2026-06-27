@@ -188,6 +188,12 @@
       </div>
       <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="md:col-span-2 flex items-center justify-center relative">
+          <div id="love-image-loader" class="absolute inset-0 z-20 flex items-center justify-center rounded-lg bg-slate-950/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="flex flex-col items-center gap-3 text-center">
+              <div class="loader-ring h-12 w-12 rounded-full border-4 border-violet-400/25 border-t-violet-300"></div>
+              <p class="text-sm uppercase tracking-[0.3em] text-slate-200/90">Loading memory</p>
+            </div>
+          </div>
           <img id="love-main-image" src="" alt="" class="max-h-[60vh] w-auto rounded-lg shadow-lg object-contain">
           <button id="love-prev" class="love-nav left" aria-label="Previous image">
             <svg class="w-5 h-5 text-white" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15L7 10l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

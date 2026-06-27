@@ -281,6 +281,7 @@ if (document.readyState !== 'loading') {
   const loveMain = document.getElementById('love-main-image');
   const loveCaption = document.getElementById('love-caption');
   const loveThumbs = document.getElementById('love-thumbs');
+  const loveImageLoader = document.getElementById('love-image-loader');
   const lovePrev = document.getElementById('love-prev');
   const loveNext = document.getElementById('love-next');
   const loveClose = document.getElementById('love-close');
@@ -313,13 +314,26 @@ if (document.readyState !== 'loading') {
     });
   }
 
+  function setImageLoading(isLoading){
+    if (!loveImageLoader) return;
+    loveImageLoader.classList.toggle('show', isLoading);
+    lovePrev?.classList.toggle('pointer-events-none', isLoading);
+    loveNext?.classList.toggle('pointer-events-none', isLoading);
+    lovePrev?.classList.toggle('opacity-60', isLoading);
+    loveNext?.classList.toggle('opacity-60', isLoading);
+  }
+
   function showImageAt(i){
     if (i < 0) i = loveImages.length - 1;
     if (i >= loveImages.length) i = 0;
     currentIndex = i;
     loveMain.style.opacity = '0';
-    setTimeout(()=>{
-      loveMain.src = loveImages[currentIndex];
+    setImageLoading(true);
+
+    const nextSrc = loveImages[currentIndex];
+    const imageToLoad = new Image();
+    imageToLoad.onload = () => {
+      loveMain.src = nextSrc;
       // split the quote around the em-dash so the first part can be highlighted
       const q = (loveQuotes[currentIndex] || '').split('—');
       if (q.length >= 2) {
@@ -332,7 +346,14 @@ if (document.readyState !== 'loading') {
       loveCounter.textContent = `${currentIndex+1} / ${loveImages.length}`;
       updateThumbs(currentIndex);
       loveMain.style.opacity = '1';
-    }, 160);
+      setImageLoading(false);
+    };
+    imageToLoad.onerror = () => {
+      loveMain.src = nextSrc;
+      loveMain.style.opacity = '1';
+      setImageLoading(false);
+    };
+    imageToLoad.src = nextSrc;
   }
 
   function openModal(startIndex=0){
