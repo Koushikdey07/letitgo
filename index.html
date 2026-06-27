@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enter the Secret</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-200 overflow-hidden">
+
+<div id="cover-page" class="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-slate-950/95 backdrop-blur-sm px-4 py-6 overflow-auto">
+  <div class="relative w-full max-w-5xl">
+    <div class="cover-backdrop absolute inset-0 rounded-[2rem] bg-gradient-to-br from-slate-950 via-violet-950 to-pink-950 shadow-[0_0_80px_rgba(139,92,246,0.35)]"></div>
+    <div class="relative overflow-hidden rounded-[2rem] border border-violet-500/20 bg-slate-950/95 shadow-2xl shadow-violet-900/40 backdrop-blur-xl">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] min-h-[70vh] gap-6">
+        <div class="door-panel left relative overflow-hidden p-6 sm:p-8 md:p-10 bg-[radial-gradient(circle_at_top_left,rgba(192,132,252,0.2),transparent_45%),linear-gradient(180deg,#111827_0%,#0f172a_100%)] min-h-[320px]">
+          <div class="door-title text-violet-200 uppercase tracking-[0.45em] text-xs mb-6">Private Passage</div>
+          <div class="door-arch absolute inset-x-8 top-10 h-28 rounded-b-[4rem] border border-violet-500/10 bg-violet-500/5 shadow-inner"></div>
+          <div class="door-detail absolute left-10 top-32 h-44 w-24 rounded-3xl bg-violet-500/10 border border-violet-500/20 shadow-[inset_0_0_16px_rgba(139,92,246,0.2)]"></div>
+          <div class="door-panel-text relative mt-40 text-slate-200">
+            <h3 class="serif text-3xl sm:text-4xl text-violet-300 mb-4">A Door to the Memories</h3>
+            <p class="text-sm leading-7 text-slate-400 max-w-xs">The page is guarded by a gentle secret. Enter the right passkey and step inside the story.</p>
+          </div>
+        </div>
+        <div class="door-panel right relative flex flex-col justify-center items-center p-6 sm:p-8 lg:p-10 bg-slate-950/90">
+          <p class="uppercase text-violet-300 text-xs tracking-[0.45em] mb-3">Unlock the gate</p>
+          <h2 class="serif text-2xl sm:text-3xl lg:text-4xl text-slate-100 mb-4 text-center">Enter the Secret Passcode</h2>
+          <p class="text-sm sm:text-base text-slate-400 text-center max-w-md mb-8">Only those who know how to let it go may enter.</p>
+          <div class="w-full max-w-sm">
+            <label class="sr-only" for="cover-passcode">Passkey</label>
+            <div class="relative">
+              <input id="cover-passcode" type="password" placeholder="Enter passkey" class="w-full rounded-3xl border border-violet-500/20 bg-slate-900/90 px-4 py-4 pr-12 text-slate-100 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20" />
+              <button id="toggle-eye" type="button" aria-label="Show passkey" class="absolute right-2 top-1/2 -translate-y-1/2 text-violet-300 hover:text-violet-200 bg-slate-800/40 p-2 rounded-full">
+                <!-- eye icon -->
+                <svg id="icon-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+            </div>
+            <button id="unlock-btn" class="mt-5 w-full rounded-3xl bg-gradient-to-r from-violet-500 to-pink-500 px-5 py-4 text-slate-950 font-semibold shadow-lg shadow-violet-500/20 transition hover:from-violet-400 hover:to-pink-400">Unlock</button>
+            <p id="cover-message" class="mt-4 min-h-[1.25rem] text-center text-sm text-rose-300 opacity-0 transition-opacity"></p>
+          </div>
+          <div class="mt-8 text-xs text-slate-500 text-center">Hint: the phrase that frees the memory</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const COVER_PASSKEY = 'puchu'; // The secret passkey to unlock the page
+const passInput = document.getElementById('cover-passcode');
+const unlockBtn = document.getElementById('unlock-btn');
+const coverMessage = document.getElementById('cover-message');
+const toggleEye = document.getElementById('toggle-eye');
+const iconEye = document.getElementById('icon-eye');
+
+function showCoverMessage(message) {
+  coverMessage.textContent = message;
+  coverMessage.classList.add('visible');
+  setTimeout(() => coverMessage.classList.remove('visible'), 2200);
+}
+
+function validatePasskey() {
+  const value = passInput?.value?.trim().toLowerCase() || '';
+  if (value === COVER_PASSKEY) {
+    // send a one-time access token so main_content.html will allow entry once
+    window.location.href = 'main_content.html?access=1';
+  } else {
+    showCoverMessage('Wrong passkey. Try again.');
+  }
+}
+
+unlockBtn?.addEventListener('click', validatePasskey);
+passInput?.addEventListener('keydown', event => {
+  if (event.key === 'Enter') validatePasskey();
+});
+
+// Eye toggle behavior
+let passVisible = false;
+function setEyeIcon(visible) {
+  if (!iconEye) return;
+  if (visible) {
+    iconEye.innerHTML = `
+      <path d="M3 3l18 18" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M10.47 10.47a3 3 0 004.06 4.06" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M9.88 5.65C11.27 5.2 12.61 5 14 5c4.477 0 8.268 2.943 9.542 7-1.03 3.283-3.608 5.834-6.77 6.72" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M6.11 6.11C4.84 7.057 3.732 8.463 2.458 12c1.274 4.057 5.065 7 9.542 7 1.2 0 2.36-.18 3.44-.53" stroke-linecap="round" stroke-linejoin="round"></path>
+    `;
+  } else {
+    iconEye.innerHTML = `
+      <path d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" stroke-linecap="round" stroke-linejoin="round"></path>
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+    `;
+  }
+}
+
+toggleEye?.addEventListener('click', () => {
+  passVisible = !passVisible;
+  if (passInput) passInput.type = passVisible ? 'text' : 'password';
+  toggleEye.setAttribute('aria-label', passVisible ? 'Hide passkey' : 'Show passkey');
+  setEyeIcon(passVisible);
+});
+
+// initialize icon state
+setEyeIcon(passVisible);
+</script>
+
+</body>
+</html>
